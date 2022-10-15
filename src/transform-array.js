@@ -14,54 +14,45 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 function transform(arr) {
-  console.log(arr)
   if (!(Array.isArray(arr))) throw new Error(`'arr' parameter must be an instance of the Array!`);
-  // for (let i=0; i<arr.length;i++){
-  //   if (arr[i]=='--discard-next') {
-  //     arr[i]='discard'
-  //     arr[i+1]='discard'
-  //   } else if (arr[i]=='--discard-prev'){
-  //     if (i!=0){
-  //       arr[i]='discard'
-  //       arr[i-1]='discard'
-  //     } else arr[i]='discard'
-  //   } else if (arr[i]=='--double-next') {
-  //     if (i!=arr.length-1){
-  //       arr[i] = arr[i-1]
-  //     } else {
-  //       arr.splice(arr.length-1, 1)
-  //     }
-  //   }
-
-  // }
-  
-  for (let i=0; i<arr.length;i++){
-    if (arr[i]=='--discard-next') {
-      arr.splice(i, 2)
-      i--
-    } else if (arr[i]=='--discard-prev'){
+  var newArr = arr.slice()
+  for (let i=0; i<newArr.length;i++){
+    if (newArr[i]=='--discard-next') {
+        if (i!=newArr.length-1){
+          newArr[i]='discard'
+          newArr[i+1]='discard'
+      } else {
+        newArr.pop()
+      }
+    } else if (newArr[i]=='--discard-prev'){
       if (i!=0){
-        arr.splice(i-1, 2)
-        i--
+        newArr[i]='discard'
+        newArr[i-1]='discard'
       } else {
-        arr.shift()
+        newArr.shift()
+          i--
       }
-    } else if (arr[i]=='--double-next'){
-      if (i!=arr.length-1){
-        arr[i] = arr[i-1]
+    } else if (newArr[i]=='--double-next') {
+      if (i!=newArr.length-1){
+        newArr[i] = newArr[i+1]
       } else {
-        arr.pop()
+        newArr.pop()
       }
-    } else if (arr[i]=='--double-prev'){
-      if (i!=0){
-        arr[i] = arr[i-1]
-      } else {
-        arr.shift()
-      }
-      
+    } else if (newArr[i]=='--double-prev'){
+        if (i!=0){
+          newArr[i] = newArr[i-1]
+       } else {
+        newArr.shift()
+       }
     }
   }
-  return arr
+  for (let i=0; i<newArr.length;i++) {
+      if (newArr[i]=='discard'){
+        newArr.splice(i, 1)
+          i--
+      }
+  }
+  return newArr
 }
 
 module.exports = {
